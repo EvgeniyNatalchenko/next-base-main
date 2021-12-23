@@ -11,8 +11,23 @@ import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import {useRouter} from 'next/router';
 
+import Radio from '@mui/material/Radio';
+import RadioGroup from '@mui/material/RadioGroup';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import FormControl from '@mui/material/FormControl';
+import FormLabel from '@mui/material/FormLabel';
+
+import DatePicker from '@mui/lab/DatePicker';
+import AdapterDateFns from '@mui/lab/AdapterDateFns';
+import LocalizationProvider from '@mui/lab/LocalizationProvider';
+
+
+
+
+
 export default function SignUp() {
     const router = useRouter()
+    const [date_value, setDateValue] = React.useState(null);
     const handleSubmit = (event) => {
       event.preventDefault();
       const data = new FormData(event.currentTarget);
@@ -42,6 +57,8 @@ export default function SignUp() {
                     Sign up
                 </Typography>
                 <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 3 }}>
+
+                
                     <Grid container spacing={2}>
                         <Grid item xs={12} sm={6}>
                             <TextField
@@ -85,7 +102,31 @@ export default function SignUp() {
                                 autoComplete="new-password"
                             />
                         </Grid>
+                        <Grid item xs={12}>
+                        <FormControl component="fieldset">
+                                <FormLabel component="legend">Gender</FormLabel>
+                                  <RadioGroup aria-label="gender"  defaultValue="female"  name="radio-buttons-group">
+                                     <FormControlLabel value="female" control={<Radio />} label="Female" />
+                                     <FormControlLabel value="male" control={<Radio />} label="Male" />
+                                  </RadioGroup>
+                               </FormControl>
+                        </Grid>
+                        <Grid item xs={12}>
+                        <LocalizationProvider dateAdapter={AdapterDateFns}>
+                        <DatePicker
+                             label="Birth date"
+                             value={date_value}
+                             onChange={(newValue) => {  setDateValue(newValue); }}
+                             renderInput={(params) => <TextField {...params} />}
+                        />
+                        </LocalizationProvider>
+                        </Grid>
                     </Grid>
+                   
+
+
+
+
                     <Button
                         type="submit"
                         fullWidth
