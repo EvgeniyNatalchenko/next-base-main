@@ -3,28 +3,30 @@ import React from 'react'
 import Layout from '../../components/layout'
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
-import { Paper } from '@mui/material';
+import { Button, Paper } from '@mui/material';
+;
+import { useRouter } from 'next/router';
+import { useSelector, useDispatch } from 'react-redux';
+import { selectUsers, fetchUsers, updateUserName } from '../../store/slice/userSlice';
+import { NearMe } from '@mui/icons-material';
 
-export const getServerSideProps = async (context) => {
-    const uid = context.params.uid
-    const req = await axios.get(`http://localhost:3000/api/user?uid=${uid}`)
+export default function User() {
+ 
+  const [userName, setUserName] = React.useState('')
+  const router = useRouter()
+  const users = useSelector(selectUsers)
+  const dispatch = useDispatch()
+  const { uid } = router.query
 
-    // Проверяем статус ответа от сервера
-    if (req.status >= 400) {
-        return { notFound: true }
-    }
-    // Фильтрация данных (при необходимости)
-    const newUserData = { ...req.data, password: "" }
-    return {
-        props: {
-            user: newUserData
-        }
-    }
-}
+  React.useEffect(() => {
+      if (!users) dispatch(fetchUsers())
+  }, [])
 
-export default function User(props) {
-    const { name, username, email, phone, website, company } = props.user
+  if(!users) return null;
+  const user = users.find(user => parseInt(user.id) === parseInt(uid))
+  const { name, username, email, phone, website, company } = user
 
+  
     return (
             <Paper>
             <Box
@@ -35,8 +37,7 @@ export default function User(props) {
                 noValidate
                 autoComplete="off"
             >
-                
-                    <TextField defaultValue={name} label="Name" variant="outlined" disabled />
+                    <TextField defaultValue={name} onChange={event => setUserName(event.target.value)} label="Name" variant="outlined" />
                     <TextField defaultValue={username} label="Nick name" variant="outlined" disabled />
                     <TextField defaultValue={email} label="Email" variant="outlined" disabled />
                 
@@ -45,7 +46,7 @@ export default function User(props) {
                     <TextField defaultValue={website} label="Website" variant="outlined" disabled />
                     <TextField defaultValue={company.name} label="Company" variant="outlined" disabled />
                 
-
+                    <Button onClick={() => dispatch(updateUserName({uid, name: userName}))}>Submit</Button>
             </Box>
             </Paper>
     )

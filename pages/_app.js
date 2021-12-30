@@ -5,6 +5,12 @@ import { ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import { CacheProvider } from '@emotion/react';
 
+
+// init redux store
+import { Provider } from 'react-redux'
+import store from '../store/config.store'
+import { useStore } from '../store/config.store'
+
 import theme from '../conf/them';
 import createEmotionCache from '../createEmotionCache';
 import Layout from '../components/layout';
@@ -14,8 +20,10 @@ const clientSideEmotionCache = createEmotionCache();
 
 export default function MyApp(props) {
   const { Component, emotionCache = clientSideEmotionCache, pageProps } = props;
+  //const store = useStore(pageProps.initialReduxState)
 
   return (
+    <Provider store={store}>
     <CacheProvider value={emotionCache}>
       <Head>
         <title>My page</title>
@@ -30,6 +38,7 @@ export default function MyApp(props) {
         
       </ThemeProvider>
     </CacheProvider>
+    </Provider>
   );
 }
 

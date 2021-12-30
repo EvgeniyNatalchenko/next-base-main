@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useState } from 'react';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
@@ -12,20 +13,56 @@ import {useRouter} from 'next/router';
 
 ///export const UserContext = createContext();
 
+//import userSlice from '../store/slice/userSlice'
+//import currentuserSlice from '../store/slice/currentuserSlice'
+
+import { useSelector, useDispatch } from 'react-redux';
+import { addUser, updateUserName } from '../store/slice/userSlice';
+import { setCurrentUser,exit } from '../store/slice/currentuserSlice';
+import { selectUsers, fetchUsers } from '../store/slice/userSlice';
+
+
 export default function SignIn() {
+
+  const users = useSelector(selectUsers)
+  const dispatch = useDispatch();
+
   const router = useRouter()
   
+  React.useEffect(() => {
+    if (!users) dispatch(fetchUsers())
+}, [])
+
+const [email, setemail] = useState(null);
+const [password, setpassword] = useState(null);
+
 
   const handleSubmit = (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
     const email = data.get('email')
     const password = data.get('password')
-    console.log("===================="+data);
-    if (email === password) {
+    if (email === password)
+    {
+      setemail(email);
+      setpassword(password);
+      const user = users.find(user => user.email === email)
+      if(user) dispatch(setCurrentUser(user.id))
+      else     dispatch(exit)
       router.push('/')
     }
+    else
+    {
+      dispatch(exit)
+    }
   };
+
+  function registerClick() {
+    const user = users.find(user => user.email === email)
+    console.log("==ee=" +email)
+    if(user) return dispatch(setCurrentUser(user.id))
+    else     return dispatch(exit)
+  }
 
   return (
       <Container component="main" maxWidth="xs">
@@ -69,6 +106,7 @@ export default function SignIn() {
               fullWidth
               variant="contained"
               sx={{ mt: 3, mb: 2 }}
+            
             >
               Sign In
             </Button>

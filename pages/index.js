@@ -16,7 +16,17 @@ import GlobalStyles from '@mui/material/GlobalStyles';
 import Container from '@mui/material/Container';
 
 
+// redux
+import { useSelector, useDispatch } from 'react-redux'
+import { decrementCount, incrementCount } from '../store/actions/counter';
+
+
 function HomePage() {
+  const store = useSelector(store => store)
+  const { counter=0 } = store
+  const dispatch = useDispatch()
+
+
   return (
     <React.Fragment>
       <GlobalStyles styles={{ ul: { margin: 0, padding: 0, listStyle: 'none' } }} />
